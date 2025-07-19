@@ -112,6 +112,105 @@ npm run dev  # or npm start
 
 Server should be live at `http://localhost:3000`
 
+---
+
+## 📘 Extended API Documentation
+
+All routes under `/gadgets` are protected and require a valid **JWT token** in the request header:
+```
+Authorization: Bearer <your_token_here>
+```
+
+### 🔐 Auth Routes
+
+#### 🟢 `POST /auth/signup`
+Register a new agent.
+
+**Request Body:**
+```json
+{
+  "email": "agent@imf.com",
+  "password": "yourPassword"
+}
+```
+
+#### 🟢 `POST /auth/login`
+Authenticate and receive a token.
+
+**Request Body:**
+```json
+{
+  "email": "agent@imf.com",
+  "password": "yourPassword"
+}
+```
+
+**Response:**
+```json
+{
+  "token": "<jwt_token>"
+}
+```
+
+---
+
+### 🔧 Gadget Routes
+
+| Method | Endpoint                          | Description                                  |
+|--------|-----------------------------------|----------------------------------------------|
+| GET    | `/gadgets`                       | Retrieve all gadgets with random success %   |
+| GET    | `/gadgets?status=Available`      | Retrieve gadgets filtered by status          |
+| POST   | `/gadgets`                       | Add a new gadget (auto-generated codename)   |
+| PATCH  | `/gadgets/:id`                   | Update gadget info (name/status)             |
+| DELETE | `/gadgets/:id`                   | Soft delete (mark as `Decommissioned`)       |
+| POST   | `/gadgets/:id/self-destruct`     | Simulate self-destruct with confirmation code|
+
+---
+
+### 🧪 Sample Gadget Creation
+
+**Request:**
+```http
+POST /gadgets
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "name": "Exploding Toothbrush"
+}
+```
+
+**Response:**
+```json
+{
+  "_id": "abc123",
+  "name": "Exploding Toothbrush",
+  "codename": "shadow-viper",
+  "status": "Available",
+  "createdAt": "2025-07-19T09:00:00Z",
+  "updatedAt": "2025-07-19T09:00:00Z"
+}
+```
+
+---
+
+### 🔴 Self-Destruct Example
+
+**Request:**
+```http
+POST /gadgets/abc123/self-destruct
+Authorization: Bearer <token>
+```
+
+**Response:**
+```json
+{
+  "message": "Self-destruct sequence initiated.",
+  "confirmationCode": "874921"
+}
+```
+
+---
 
 ## 📣 Note
-> This message will not self-destruct... 
+> This message will not self-destruct...
